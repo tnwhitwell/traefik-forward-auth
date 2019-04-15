@@ -117,6 +117,7 @@ func TestServerHandler(t *testing.T) {
 			},
 		},
 	}
+	config.Providers.Google.Build()
 
 	// Should redirect vanilla request to login url
 	req := newHttpRequest("/foo")
@@ -192,6 +193,7 @@ func TestServerAuthCallback(t *testing.T) {
 			},
 		},
 	}
+	config.Providers.Google.Build()
 
 	// Setup token server
 	tokenServerHandler := &TokenServerHandler{}
@@ -260,6 +262,7 @@ func TestServerRoutePathPrefix(t *testing.T) {
 			},
 		},
 	}
+	config.Providers.Google.Build()
 
 	// Should allow /api request
 	req := newHttpRequest("/api")

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+
+	"github.com/markbates/goth/providers/google"
 )
 
 type Google struct {
@@ -16,6 +18,8 @@ type Google struct {
 	LoginURL *url.URL
 	TokenURL *url.URL
 	UserURL  *url.URL
+
+	provider *google.Provider
 }
 
 func (g *Google) Build() {
@@ -34,24 +38,43 @@ func (g *Google) Build() {
 		Host:   "www.googleapis.com",
 		Path:   "/oauth2/v2/userinfo",
 	}
+
+	g.provider = google.New(g.ClientId, g.ClientSecret, "")
 }
 
 func (g *Google) GetLoginURL(redirectUri, state string) string {
-	q := url.Values{}
-	q.Set("client_id", g.ClientId)
-	q.Set("response_type", "code")
-	q.Set("scope", g.Scope)
-	if g.Prompt != "" {
-		q.Set("prompt", g.Prompt)
+	provider := g.provider
+	provider.CallbackURL = redirectUri
+	sesh, err := provider.BeginAuth(state)
+	if err != nil {
+		// log.Debug(err)
+		fmt.Printf("ERROR %#v\n", err)
+		return ""
 	}
-	q.Set("redirect_uri", redirectUri)
-	q.Set("state", state)
+	url, err := sesh.GetAuthURL()
+	if err != nil {
+		// log.Debug(err)
+		fmt.Printf("ERROR %#v\n", err)
+		return ""
+	}
 
-	var u url.URL
-	u = *g.LoginURL
-	u.RawQuery = q.Encode()
+	return url
 
-	return u.String()
+	// q := url.Values{}
+	// q.Set("client_id", g.ClientId)
+	// q.Set("response_type", "code")
+	// q.Set("scope", g.Scope)
+	// if g.Prompt != "" {
+	// 	q.Set("prompt", g.Prompt)
+	// }
+	// q.Set("redirect_uri", redirectUri)
+	// q.Set("state", state)
+
+	// var u url.URL
+	// u = *g.LoginURL
+	// u.RawQuery = q.Encode()
+
+	// return u.String()
 }
 
 func (g *Google) ExchangeCode(redirectUri, code string) (string, error) {

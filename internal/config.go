@@ -103,7 +103,7 @@ func NewGlobalConfigWithArgs(args []string) Config {
 
 	config.parseFlags(args)
 
-	// Struct defaults
+	// Providers
 	config.Providers.Google.Build()
 
 	// Transformations

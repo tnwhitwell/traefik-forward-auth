@@ -123,14 +123,10 @@ func TestGetLoginURL(t *testing.T) {
 				ClientId:     "idtest",
 				ClientSecret: "sectest",
 				Scope:        "scopetest",
-				LoginURL: &url.URL{
-					Scheme: "https",
-					Host:   "test.com",
-					Path:   "/auth",
-				},
 			},
 		},
 	}
+	config.Providers.Google.Build()
 
 	// Check url
 	uri, err := url.Parse(GetLoginURL(r, "nonce"))
@@ -140,11 +136,11 @@ func TestGetLoginURL(t *testing.T) {
 	if uri.Scheme != "https" {
 		t.Error("Expected login Scheme to be \"https\", got:", uri.Scheme)
 	}
-	if uri.Host != "test.com" {
-		t.Error("Expected login Host to be \"test.com\", got:", uri.Host)
+	if uri.Host != "accounts.google.com" {
+		t.Error("Expected login Host to be \"accounts.google.com\", got:", uri.Host)
 	}
-	if uri.Path != "/auth" {
-		t.Error("Expected login Path to be \"/auth\", got:", uri.Path)
+	if uri.Path != "/o/oauth2/auth" {
+		t.Error("Expected login Path to be \"/o/oauth2/auth\", got:", uri.Path)
 	}
 
 	// Check query string
@@ -183,6 +179,7 @@ func TestGetLoginURL(t *testing.T) {
 			},
 		},
 	}
+	config.Providers.Google.Build()
 
 	// Check url
 	uri, err = url.Parse(GetLoginURL(r, "nonce"))
@@ -237,6 +234,7 @@ func TestGetLoginURL(t *testing.T) {
 			},
 		},
 	}
+	config.Providers.Google.Build()
 
 	// Check url
 	uri, err = url.Parse(GetLoginURL(r, "nonce"))
