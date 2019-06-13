@@ -30,6 +30,7 @@ func TestConfigDefaults(t *testing.T) {
 	assert.Equal("auth", c.DefaultAction)
 	assert.Len(c.Domains, 0)
 	assert.Equal(time.Second*time.Duration(43200), c.Lifetime)
+	assert.Equal("/_tfa-logout", c.LogoutPath)
 	assert.Equal("/_oauth", c.Path)
 	assert.Len(c.Whitelist, 0)
 
@@ -237,7 +238,7 @@ func TestConfigParseEnvironmentBackwardsCompatability(t *testing.T) {
 		"COOKIE_SECURE":  "false",
 		"COOKIE_DOMAINS": "test1.com,example.org",
 		"COOKIE_DOMAIN":  "another1.net",
-		"DOMAIN":        "test2.com,example.org",
+		"DOMAIN":         "test2.com,example.org",
 		"WHITELIST":      "test3.com,example.org",
 	}
 	for k, v := range vars {

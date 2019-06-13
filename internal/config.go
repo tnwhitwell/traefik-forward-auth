@@ -33,6 +33,7 @@ type Config struct {
 	DefaultAction  string               `long:"default-action" env:"DEFAULT_ACTION" default:"auth" choice:"auth" choice:"allow" description:"Default action"`
 	Domains        CommaSeparatedList   `long:"domain" env:"DOMAIN" description:"Only allow given email domains, can be set multiple times"`
 	LifetimeString int                  `long:"lifetime" env:"LIFETIME" default:"43200" description:"Lifetime in seconds"`
+	LogoutPath     string               `long:"logout-path" env:"LOGOUT_PATH" default:"/_tfa-logout" description:"Logout URL path"`
 	Path           string               `long:"url-path" env:"URL_PATH" default:"/_oauth" description:"Callback URL Path"`
 	SecretString   string               `long:"secret" env:"SECRET" description:"Secret used for signing (required)" json:"-"`
 	Whitelist      CommaSeparatedList   `long:"whitelist" env:"WHITELIST" description:"Only allow given email addresses, can be set multiple times"`

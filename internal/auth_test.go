@@ -59,6 +59,13 @@ func TestAuthValidateCookie(t *testing.T) {
 		assert.Equal("Cookie has expired", err.Error())
 	}
 
+	// Should catch no cookie
+	valid, _, err = ValidateCookie(r, nil)
+	assert.False(valid)
+	if assert.Error(err) {
+		assert.Equal("No cookie provided", err.Error())
+	}
+
 	// Should accept valid cookie
 	config.Lifetime = time.Second * time.Duration(10)
 	c = MakeCookie(r, "test@test.com")
@@ -293,6 +300,14 @@ func TestAuthClearCSRFCookie(t *testing.T) {
 	c := ClearCSRFCookie(r)
 	if c.Value != "" {
 		t.Error("ClearCSRFCookie should create cookie with empty value")
+	}
+}
+func TestAuthClearCookie(t *testing.T) {
+	config, _ = NewConfig([]string{})
+	r, _ := http.NewRequest("GET", "http://example.com/logout", nil)
+	c := ClearCookie(r)
+	if c.Value != "" {
+		t.Error("ClearCookie should create cookie with empty value")
 	}
 }
 

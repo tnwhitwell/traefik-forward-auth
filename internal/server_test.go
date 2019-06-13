@@ -127,6 +127,50 @@ func TestServerDefaultAction(t *testing.T) {
 	assert.Equal(200, res.StatusCode, "request should be allowed with default handler")
 }
 
+func TestServerLogout(t *testing.T) {
+	assert := assert.New(t)
+	config, _ = NewConfig([]string{})
+
+	// Should error if no cookie
+	req := newDefaultHttpRequest(config.LogoutPath)
+
+	res, _ := doHttpRequest(req, nil)
+	assert.Equal(http.StatusBadRequest, res.StatusCode, "no cookie should error")
+
+	// Should error if invalid cookie
+	req = newDefaultHttpRequest(config.LogoutPath)
+	c := MakeCookie(req, "test@example.com")
+	parts := strings.Split(c.Value, "|")
+	c.Value = fmt.Sprintf("bad|%s|%s", parts[1], parts[2])
+
+	res, _ = doHttpRequest(req, c)
+	assert.Equal(http.StatusBadRequest, res.StatusCode, "invalid cookie should error")
+
+	// Should pass if invalid email
+	req = newDefaultHttpRequest(config.LogoutPath)
+	c = MakeCookie(req, "test@example.com")
+	config.Domains = []string{"test.com"}
+
+	res, _ = doHttpRequest(req, c)
+	assert.Equal(http.StatusOK, res.StatusCode, "invalid email should be allowed")
+	cookies := res.Cookies()
+	assert.Equal(len(cookies), 1)
+	assert.Equal(cookies[0].Name, config.CookieName)
+	assert.Equal(cookies[0].Value, "")
+
+	// Should pass if valid request email
+	req = newDefaultHttpRequest(config.LogoutPath)
+	c = MakeCookie(req, "test@example.com")
+	config.Domains = []string{}
+
+	res, _ = doHttpRequest(req, c)
+	assert.Equal(http.StatusOK, res.StatusCode, "valid email should be allowed")
+	cookies = res.Cookies()
+	assert.Equal(len(cookies), 1)
+	assert.Equal(cookies[0].Name, config.CookieName)
+	assert.Equal(cookies[0].Value, "")
+}
+
 func TestServerRouteHeaders(t *testing.T) {
 	assert := assert.New(t)
 	config, _ = NewConfig([]string{})

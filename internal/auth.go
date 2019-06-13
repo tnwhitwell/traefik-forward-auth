@@ -19,6 +19,9 @@ import (
 
 // Cookie = hash(secret, cookie domain, email, expires)|expires|email
 func ValidateCookie(r *http.Request, c *http.Cookie) (bool, string, error) {
+	if c == nil {
+		return false, "", errors.New("No cookie provided")
+	}
 	parts := strings.Split(c.Value, "|")
 
 	if len(parts) != 3 {
@@ -189,6 +192,19 @@ func ClearCSRFCookie(r *http.Request) *http.Cookie {
 		Value:    "",
 		Path:     "/",
 		Domain:   csrfCookieDomain(r),
+		HttpOnly: true,
+		Secure:   !config.InsecureCookie,
+		Expires:  time.Now().Local().Add(time.Hour * -1),
+	}
+}
+
+func ClearCookie(r *http.Request) *http.Cookie {
+
+	return &http.Cookie{
+		Name:     config.CookieName,
+		Value:    "",
+		Path:     "/",
+		Domain:   cookieDomain(r),
 		HttpOnly: true,
 		Secure:   !config.InsecureCookie,
 		Expires:  time.Now().Local().Add(time.Hour * -1),

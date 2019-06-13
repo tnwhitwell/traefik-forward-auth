@@ -37,6 +37,9 @@ func (s *Server) buildRoutes() {
 	// Add callback handler
 	s.router.Handle(config.Path, s.AuthCallbackHandler())
 
+	// Add logout handler
+	s.router.Handle(config.LogoutPath, s.LogoutHandler())
+
 	// Add a default handler
 	if config.DefaultAction == "allow" {
 		s.router.NewRoute().Handler(s.AllowHandler("default"))
@@ -164,6 +167,28 @@ func (s *Server) AuthCallbackHandler() http.HandlerFunc {
 
 		// Redirect
 		http.Redirect(w, r, redirect, http.StatusTemporaryRedirect)
+	}
+}
+
+func (s *Server) LogoutHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Logging setup
+		logger := s.logger(r, "default", "Handling callback")
+
+		c, _ := r.Cookie(config.CookieName)
+		_, _, err := ValidateCookie(r, c)
+		if err != nil {
+			logger.Debug("User was not already authenticated")
+			http.Error(w, "Not already authenticated", http.StatusBadRequest)
+			return
+		}
+		// Remove existing cookies from HeaderMap
+		w.Header().Del("Set-Cookie")
+		// Clear Auth cookie
+		http.SetCookie(w, ClearCookie(r))
+
+		// Return logout 'page'
+		http.Error(w, "Logged Out", http.StatusOK)
 	}
 }
 

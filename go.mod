@@ -13,17 +13,14 @@ require (
 	github.com/go-kit/kit v0.8.0 // indirect
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gravitational/trace v0.0.0-20190409171327-f30095ced5ff // indirect
-	github.com/jessevdk/go-flags v1.4.1-0.20181221193153-c0795c8afcf4
 	github.com/jonboulle/clockwork v0.1.0 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
-	github.com/kr/pty v1.1.4 // indirect
 	github.com/miekg/dns v1.1.8 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/ryanuber/go-glob v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.4.1
-	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/stretchr/testify v1.3.0
 	github.com/thomseddon/go-flags v1.4.1-0.20190507184247-a3629c504486
 	github.com/vulcand/predicate v1.1.0 // indirect
